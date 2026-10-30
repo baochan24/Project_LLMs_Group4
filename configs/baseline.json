@@ -1,0 +1,41 @@
+{
+  "seed": 42,
+  "device": "cpu",
+  "data_dir": "data/processed",
+  "output_dir": "outputs",
+  "checkpoint_dir": "checkpoints",
+  "model": {
+    "n_layers": 2,
+    "d_model": 128,
+    "n_heads": 4,
+    "d_ff": 512,
+    "context_length": 128,
+    "dropout": 0.1
+  },
+  "training": {
+    "batch_size": 8,
+    "steps": 1000,
+    "eval_interval": 100,
+    "eval_tokens": 4096,
+    "num_threads": 1,
+    "learning_rate": 0.0003,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "weight_decay": 0.01,
+    "grad_clip": 1.0
+  },
+  "generation": {
+    "prompt": "ROMEO:\n",
+    "max_new_tokens": 100
+  },
+  "experiments": {
+    "seeds": [
+      42,
+      43,
+      44
+    ]
+  }
+}

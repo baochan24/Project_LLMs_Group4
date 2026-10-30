@@ -1,6 +1,6 @@
 # Cấu trúc và ghi chú triển khai — Project LLMs Group 4
 
-> Bản chốt ngày 30/10/2026. Tài liệu mô tả cấu trúc dự kiến và tiêu chí triển khai; không khẳng định các module đã được viết hoặc kiểm thử.
+> Bản chốt ngày 30/10/2026. Các module baseline đã được hiện thực và smoke test; xem [validation.md](validation.md) để biết bằng chứng và giới hạn. Các checklist nghiên cứu/slide không tự động hoàn thành theo trạng thái code.
 > Repository: https://github.com/baochan24/Project_LLMs_Group4
 
 ## 1. Mục tiêu và phạm vi
@@ -15,12 +15,13 @@
 
 ## 2. Cấu trúc dự kiến
 
-Danh sách dưới đây là các đường dẫn cần triển khai. Việc có tên trong tài liệu không có nghĩa file đã tồn tại.
+Danh sách dưới đây là cấu trúc và trách nhiệm triển khai. Các module code đã có; dataset, processed data, checkpoint và outputs được sinh lúc chạy. Ghi chú nghiên cứu và slides vẫn cần nhóm hoàn thiện.
 
 | Đường dẫn | Chức năng | Phụ trách chính |
 |---|---|---|
 | README.md | Giới thiệu, cài đặt, môi trường và lệnh chạy đã kiểm chứng | TV6 |
-| requirements.txt | Khóa phiên bản dependencies sau smoke test | TV6 |
+| requirements.txt | Phiên bản trực tiếp đã kiểm chứng | TV6 |
+| requirements-notebook.txt | Dependencies tùy chọn cho notebook | TV6 |
 | .gitignore | Bỏ qua venv, cache, dataset tải về và checkpoint lớn | TV6 |
 | configs/baseline.json | Cấu hình model/train/evaluation/generation | TV6 |
 | data/README.md | Nguồn, cách chuẩn bị, chia dữ liệu, checksum | TV1 |
@@ -314,3 +315,7 @@ Nhánh công việc dự kiến: feature/overview-pretrained, feature/data, feat
 - Tiny Shakespeare: https://github.com/karpathy/char-rnn/tree/master/data/tinyshakespeare
 
 Nhóm phải đọc và dẫn đúng phần nguồn thực sự sử dụng; danh sách này không thay cho việc xác minh nội dung.
+
+## 16. Trạng thái implementation
+
+Baseline code đã có, sáu kiểm tra tự động đạt; pipeline custom và GPT-2 inference đã smoke test. Xem [README](../README.md) để chạy và [validation.md](validation.md) để phân biệt smoke test với kết quả nghiên cứu. Các giá trị khởi đầu trong config (1000 steps, eval mỗi 100 steps, eval prefix 4096 tokens) chưa thay thế việc đo và khóa ngân sách chạy trên máy nhóm. AdamW dùng betas=(0.9,0.999), eps=1e-8; GELU approximate='none'.

@@ -1,0 +1,4 @@
+-r requirements.txt
+# Optional interactive notebook support; not required for CLI/tests.
+jupyterlab>=4,<5
+ipykernel>=6,<8

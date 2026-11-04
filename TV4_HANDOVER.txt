@@ -1,0 +1,126 @@
+# TV4 – Model hoàn chỉnh và huấn luyện
+
+## 1. Phạm vi phụ trách
+
+TV4 phụ trách hai phần trong project decoder-only Transformer:
+
+- `src/model.py`: ghép các thành phần thành mô hình hoàn chỉnh, định nghĩa decoder block, forward pass, weight tying và kiểm tra số tham số.
+- `src/train.py`: tạo AdamW, training loop, validation, lưu và nạp checkpoint.
+
+Các file này hiện đã tồn tại trong repository nhóm. Khi đóng góp, chỉ cập nhật chúng nếu có thay đổi thực sự đã kiểm tra; không tạo bản sao hoặc ghi đè phiên bản hiện tại một cách tùy tiện.
+
+## 2. Kiến trúc model
+
+Cấu hình baseline trong `configs/baseline.json`:
+
+| Tham số | Giá trị |
+|---|---:|
+| Số decoder blocks (`n_layers`) | 2 |
+| Hidden dimension (`d_model`) | 128 |
+| Attention heads (`n_heads`) | 4 |
+| Head dimension | 32 |
+| FFN dimension (`d_ff`) | 512 |
+| Context length | 128 |
+| Dropout | 0.1 |
+| Batch size | 8 |
+| Precision | FP32 |
+
+Luồng forward:
+
+`Token IDs [B,T] → Token Embedding + Position Embedding → Dropout → 2 Decoder Blocks → Final LayerNorm → Output Head → Logits [B,T,V]`.
+
+Mỗi decoder block dùng Pre-LayerNorm và hai nhánh residual:
+
+`x = x + Attention(LN1(x))`
+
+`x = x + FFN(LN2(x))`
+
+FFN có dạng `Linear(d, d_ff) → GELU → Linear(d_ff, d) → Dropout`.
+
+Output head không có bias và chia sẻ trọng số với token embedding (weight tying).
+
+## 3. Tính số tham số
+
+Với một decoder block:
+
+`P_block = 4d² + 2dm + 9d + m`.
+
+Khi `m = 4d`:
+
+`P_block = 12d² + 13d`.
+
+Với baseline `d=128`, `m=512`:
+
+`P_block = 198,272`.
+
+Tổng số tham số:
+
+`P_total = Vd + Cd + L × P_block + 2d`.
+
+Với `C=128`, `L=2`, `d=128`:
+
+`P_total = 128V + 413,184`.
+
+`V` phải lấy từ vocabulary size thực tế của tokenizer/checkpoint; không tự giả định nếu chưa kiểm tra. Do weight tying, output head không tạo thêm một ma trận trọng số độc lập.
+
+Trong `src/model.py`:
+
+- `parameter_count()` đếm tham số thực tế từ `model.parameters()`.
+- `expected_parameter_count()` tính theo công thức lý thuyết.
+- Hai giá trị cần khớp nhau.
+
+## 4. Training
+
+Cấu hình baseline trong `configs/baseline.json`:
+
+| Tham số | Giá trị |
+|---|---:|
+| Optimizer | AdamW |
+| Learning rate | 0.0003 |
+| Betas | (0.9, 0.999) |
+| Epsilon | 1e-8 |
+| Weight decay | 0.01 cho matrix weights |
+| Gradient clipping | 1.0 |
+| Batch size | 8 |
+| Training steps cấu hình | 1000 |
+| Evaluation interval | 100 |
+| Seed | 42 |
+
+Training step có thứ tự:
+
+`model.train() → lấy batch → optimizer.zero_grad() → forward → cross-entropy loss → loss.backward() → gradient clipping → optimizer.step()`.
+
+Validation dùng chế độ đánh giá (`model.eval()`) và không cập nhật gradient. Checkpoint gồm trạng thái model, optimizer, tokenizer/config, step và thông tin cần thiết để khôi phục; `best.pt` giữ validation loss tốt nhất, `latest.pt` giữ trạng thái mới nhất.
+
+## 5. Kiểm chứng cần bàn giao
+
+Các kiểm tra cần chạy trong đúng thư mục gốc của repository LLM:
+
+1. Kiểm tra import và cấu trúc tensor; logits cần có shape `[B,T,V]`.
+2. Kiểm tra weight tying: `model.head.weight` và `model.token_embedding.weight` dùng chung tensor.
+3. Đối chiếu `parameter_count()` với `expected_parameter_count()`.
+4. Kiểm tra backward tạo gradient hữu hạn và optimizer step làm thay đổi tham số.
+5. Kiểm tra causal behavior và save/load checkpoint theo các test hiện có.
+6. Chạy smoke test training ngắn, sau đó evaluate checkpoint.
+
+Các lệnh tham khảo theo cấu trúc repository:
+
+```powershell
+python -m pytest -q
+python -m scripts.prepare_data
+python -m scripts.train --config configs/baseline.json --steps 3
+python -m scripts.evaluate --checkpoint checkpoints/best.pt
+```
+
+Chỉ ghi kết quả test là thành công sau khi thực sự chạy và lưu lại output trên máy hoặc trong CI. Một lần chạy smoke test 3 steps chỉ xác nhận pipeline hoạt động, không chứng minh mô hình đã hội tụ hoặc có chất lượng dự đoán tốt.
+
+## 6. Slide TV4
+
+- Slide 7: kiến trúc decoder-only hoàn chỉnh, luồng tensor, Pre-LN, residual, weight tying và công thức parameter count.
+- Slide 8: autoregressive cross-entropy objective, training step, AdamW, learning rate, weight decay, gradient clipping, validation và checkpoint.
+
+## 7. Trạng thái bàn giao
+
+- Code `src/model.py` và `src/train.py`: đã có trong repository nhóm tại thời điểm chuẩn bị ghi chú.
+- Kiểm thử trên máy cá nhân: chưa xác nhận trong ghi chú này. Trước đó các lệnh đã được chạy nhầm ở thư mục CNN `D:\Deep Learning\project`, nơi không có module `scripts`; cần mở đúng bản checkout `Project_LLMs_Group4` trước khi chạy lại.
+- Slide 7–8: cần thêm bản PDF/PPTX thực tế của nhóm trước khi đánh dấu hoàn tất.

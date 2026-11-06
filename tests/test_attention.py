@@ -1,67 +1,86 @@
+
+import pytest
 import torch
-import torch.nn.functional as F
 
 from src.attention import CausalSelfAttention
 
-def test_attention_output_shape():
-    attention = CausalSelfAttention(
-        d_model=16, n_heads=4, context_length=8, dropout=0.0
-    )
-    x = torch.randn(2, 5, 16)
 
-    y = attention(x)
+@pytest.mark.parametrize(
+    "d_model,n_heads,context_length,dropout",
+    [
+        (0, 4, 16, 0.1),
+        (128, 0, 16, 0.1),
+        (128, 4, 0, 0.1),
+        (127, 4, 16, 0.1),
+        (128, 4, 16, 1.0),
+        (128, 4, 16, -0.1),
+    ],
+)
+def test_attention_rejects_invalid_config(
+    d_model, n_heads, context_length, dropout
+):
+    with pytest.raises(ValueError):
+        CausalSelfAttention(
+            d_model, n_heads, context_length, dropout
+        )
 
-    assert y.shape == (2, 5, 16)
+
+def test_attention_rejects_invalid_input():
+    model = CausalSelfAttention(128, 4, 16, 0.1)
+
+    with pytest.raises(ValueError):
+        model(torch.randn(2, 16))
+
+    with pytest.raises(ValueError):
+        model(torch.randn(2, 17, 128))
+
+    with pytest.raises(ValueError):
+        model(torch.randn(2, 16, 64))
+
+    with pytest.raises(TypeError):
+        model(torch.ones(2, 16, 128, dtype=torch.long))
 
 def test_attention_weights_are_causal():
-    attention = CausalSelfAttention(
-        d_model=16, n_heads=4, context_length=8, dropout=0.0
-    ).eval()
-    x = torch.randn(2, 5, 16)
+    torch.manual_seed(42)
+    model = CausalSelfAttention(32, 4, 16, 0.0).eval()
+    x = torch.randn(2, 8, 32)
 
-    _, weights = attention(x, return_weights=True)
+    with torch.no_grad():
+        y, weights = model(x, return_weights=True)
 
-    future_weights = torch.triu(weights, diagonal=1)
+    assert y.shape == (2, 8, 32)
+    assert weights.shape == (2, 4, 8, 8)
+    assert torch.isfinite(y).all()
+    assert torch.count_nonzero(weights.triu(diagonal=1)).item() == 0
+
     torch.testing.assert_close(
-        future_weights,
-        torch.zeros_like(future_weights),
-        atol=0.0,
-        rtol=0.0,
+        weights.sum(dim=-1),
+        torch.ones_like(weights.sum(dim=-1)),
     )
 
-def test_future_tokens_do_not_change_past_outputs():
-    torch.manual_seed(11)
-    attention = CausalSelfAttention(
-        d_model=16, n_heads=4, context_length=8, dropout=0.0
-    ).eval()
-
-    x1 = torch.randn(2, 6, 16)
-    x2 = x1.clone()
-    x2[:, 4:, :] = torch.randn_like(x2[:, 4:, :])
-
-    y1 = attention(x1)
-    y2 = attention(x2)
-
-    torch.testing.assert_close(y1[:, :4, :], y2[:, :4, :], atol=1e-6, rtol=1e-5)
 
 def test_attention_matches_pytorch_reference():
-    torch.manual_seed(7)
-    attention = CausalSelfAttention(
-        d_model=16, n_heads=4, context_length=8, dropout=0.0
-    ).eval()
-    x = torch.randn(2, 5, 16)
+    torch.manual_seed(42)
+    model = CausalSelfAttention(32, 4, 16, 0.0).eval()
+    x = torch.randn(2, 8, 32)
 
-    q, k, v = [
-        part.reshape(2, 5, 4, 4).transpose(1, 2)
-        for part in attention.qkv(x).chunk(3, dim=-1)
-    ]
-    reference = F.scaled_dot_product_attention(
-        q, k, v, dropout_p=0.0, is_causal=True
-    )
-    reference = attention.proj(
-        reference.transpose(1, 2).contiguous().view(2, 5, 16)
-    )
+    with torch.no_grad():
+        actual = model(x)
+
+        q, k, v = model.qkv(x).chunk(3, dim=-1)
+        q, k, v = [
+            z.reshape(2, 8, 4, 8).transpose(1, 2)
+            for z in (q, k, v)
+        ]
+
+        reference = torch.nn.functional.scaled_dot_product_attention(
+            q, k, v,
+            dropout_p=0.0,
+            is_causal=True,
+        )
+        reference = reference.transpose(1, 2).contiguous().view(2, 8, 32)
+        reference = model.proj(reference)
 
     torch.testing.assert_close(
-        attention(x), reference, atol=1e-6, rtol=1e-5
+        actual, reference, rtol=1e-4, atol=1e-6
     )

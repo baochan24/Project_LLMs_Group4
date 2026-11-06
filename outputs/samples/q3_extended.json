@@ -1,0 +1,110 @@
+[
+  {
+    "model": "openai-community/gpt2",
+    "prompt": "JULIET:\nWhat light through yonder window breaks?",
+    "seed": 42,
+    "strategy": "greedy",
+    "temperature": 1.0,
+    "top_k": 0,
+    "top_p": 1.0,
+    "max_new_tokens": 100,
+    "text": "JULIET:\nWhat light through yonder window breaks?\n\nJULIET:\n\nI'm not sure.\n\nJULIET:\n\nI'm not sure.\n\nJULIET:\n\nI'm not sure.\n\nJULIET:\n\nI'm not sure.\n\nJULIET:\n\nI'm not sure.\n\nJULIET:\n\nI'm not sure.\n\nJULIET:\n\nI'm not sure.\n\n",
+    "experiment": "greedy"
+  },
+  {
+    "model": "openai-community/gpt2",
+    "prompt": "JULIET:\nWhat light through yonder window breaks?",
+    "seed": 43,
+    "strategy": "greedy",
+    "temperature": 1.0,
+    "top_k": 0,
+    "top_p": 1.0,
+    "max_new_tokens": 100,
+    "text": "JULIET:\nWhat light through yonder window breaks?\n\nJULIET:\n\nI'm not sure.\n\nJULIET:\n\nI'm not sure.\n\nJULIET:\n\nI'm not sure.\n\nJULIET:\n\nI'm not sure.\n\nJULIET:\n\nI'm not sure.\n\nJULIET:\n\nI'm not sure.\n\nJULIET:\n\nI'm not sure.\n\n",
+    "experiment": "greedy"
+  },
+  {
+    "model": "openai-community/gpt2",
+    "prompt": "JULIET:\nWhat light through yonder window breaks?",
+    "seed": 44,
+    "strategy": "greedy",
+    "temperature": 1.0,
+    "top_k": 0,
+    "top_p": 1.0,
+    "max_new_tokens": 100,
+    "text": "JULIET:\nWhat light through yonder window breaks?\n\nJULIET:\n\nI'm not sure.\n\nJULIET:\n\nI'm not sure.\n\nJULIET:\n\nI'm not sure.\n\nJULIET:\n\nI'm not sure.\n\nJULIET:\n\nI'm not sure.\n\nJULIET:\n\nI'm not sure.\n\nJULIET:\n\nI'm not sure.\n\n",
+    "experiment": "greedy"
+  },
+  {
+    "model": "openai-community/gpt2",
+    "prompt": "JULIET:\nWhat light through yonder window breaks?",
+    "seed": 42,
+    "strategy": "sample",
+    "temperature": 0.7,
+    "top_k": 0,
+    "top_p": 1.0,
+    "max_new_tokens": 100,
+    "text": "JULIET:\nWhat light through yonder window breaks?\n\nISRAEL:\n\nA long time ago.\n\nISRAEL:\n\nCan't find it.\n\nLORD:\n\nI've seen it made.\n\nISRAEL:\n\nI saw it.\n\nLORD:\n\nAnd I think I saw it.\n\nISRAEL:\n\nBut I'm not sure what.\n\nISRAEL:\n\nI don't know.\n\nLORD:\n\n",
+    "experiment": "temperature_0.7"
+  },
+  {
+    "model": "openai-community/gpt2",
+    "prompt": "JULIET:\nWhat light through yonder window breaks?",
+    "seed": 43,
+    "strategy": "sample",
+    "temperature": 0.7,
+    "top_k": 0,
+    "top_p": 1.0,
+    "max_new_tokens": 100,
+    "text": "JULIET:\nWhat light through yonder window breaks?\n\nJULIET:\n\nI see.\n\nJULIET:\n\nYou see?\n\nJULIET:\n\nAs you've seen, in a few words.\n\nJULIET:\n\nI see, ma'am.\n\nJULIET:\n\nYou see.\n\nJULIET:\n\nAnd I am so surprised, I swear.\n\nJULIET:\n\nThe light",
+    "experiment": "temperature_0.7"
+  },
+  {
+    "model": "openai-community/gpt2",
+    "prompt": "JULIET:\nWhat light through yonder window breaks?",
+    "seed": 44,
+    "strategy": "sample",
+    "temperature": 0.7,
+    "top_k": 0,
+    "top_p": 1.0,
+    "max_new_tokens": 100,
+    "text": "JULIET:\nWhat light through yonder window breaks?\n\nMARTIN:\n\nI don't know. It's a dark place, it's not like I know where that story ends.\n\nMARTIN:\n\nIt's a place that doesn't exist.\n\nMARTIN:\n\nI'm just in the middle of it.\n\nMARTIN:\n\nWe're in the middle of it.\n\nCOOKING:\n\n(They all look at each other. MARTIN reaches",
+    "experiment": "temperature_0.7"
+  },
+  {
+    "model": "openai-community/gpt2",
+    "prompt": "JULIET:\nWhat light through yonder window breaks?",
+    "seed": 42,
+    "strategy": "sample",
+    "temperature": 1.0,
+    "top_k": 0,
+    "top_p": 1.0,
+    "max_new_tokens": 100,
+    "text": "JULIET:\nWhat light through yonder window breaks? JUDIS: Isn't it hot more than I'd like it? JUDIS: It doesn't get much hotter than this inside AC power station. You're not going to notice me! Okay c'mon, car sm--- histes gotta concern you. How can you believe you think you can just see me by a tiny windowy chamber stocked with electronics? Yep, simple. Credit the tinkerer for this piece of good information. DID YOU SEE MORE OF THESE SWITCH",
+    "experiment": "temperature_1.0"
+  },
+  {
+    "model": "openai-community/gpt2",
+    "prompt": "JULIET:\nWhat light through yonder window breaks?",
+    "seed": 43,
+    "strategy": "sample",
+    "temperature": 1.0,
+    "top_k": 0,
+    "top_p": 1.0,
+    "max_new_tokens": 100,
+    "text": "JULIET:\nWhat light through yonder window breaks? HARRY Wilson: Every ash-damned gal Too full of light draw my spirits light dreaming under my cold, translucent shade.\n• LGBT individuals are long overdue redress in American public opinion on transgender concepts of sexuality and gender identity, and in our public accommodations and hiring practices . • [ The New York Times Notes Had Conceived Since 2003 , Sixth Edition , by U.S. Census Bureau ].",
+    "experiment": "temperature_1.0"
+  },
+  {
+    "model": "openai-community/gpt2",
+    "prompt": "JULIET:\nWhat light through yonder window breaks?",
+    "seed": 44,
+    "strategy": "sample",
+    "temperature": 1.0,
+    "top_k": 0,
+    "top_p": 1.0,
+    "max_new_tokens": 100,
+    "text": "JULIET:\nWhat light through yonder window breaks?\n\nMIRANDA: It immediately breaks high, and 400 feet high. (appears to get low as he rides off into the far desert). The timber frame shatters and gouges pit-top, all around 40 degrees or so down the dusty terraces. (1951 photos) Elveh's lone tread of 30 feet was draped from a crack in the wallpaper with a dry-clean cloth lit on in by 24 yards of white sunshine. He has managed to avoid darkness,",
+    "experiment": "temperature_1.0"
+  }
+]

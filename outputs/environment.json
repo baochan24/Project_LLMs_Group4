@@ -1,0 +1,6 @@
+{
+  "python": "3.13.7",
+  "torch": "2.15.0+cpu",
+  "device": "cpu",
+  "platform": "Windows-11-10.0.26200-SP0"
+}
